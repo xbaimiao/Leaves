@@ -1,0 +1,47 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: xbaimiao <3104026189@qq.com>
+Date: Mon, 25 Nov 2024 16:24:39 +0800
+Subject: [PATCH] Changes bot command
+
+
+diff --git a/src/main/java/org/leavesmc/leaves/bot/BotCommand.java b/src/main/java/org/leavesmc/leaves/bot/BotCommand.java
+index 527f01b206dcf0e677ac7ec8c27ebf5fbc27a190..2207cc44fb8fc1a7ea1fc18c635afe560862807a 100644
+--- a/src/main/java/org/leavesmc/leaves/bot/BotCommand.java
++++ b/src/main/java/org/leavesmc/leaves/bot/BotCommand.java
+@@ -161,13 +161,15 @@ public class BotCommand extends Command {
+ 
+     private void onCreate(CommandSender sender, String @NotNull [] args) {
+         if (args.length < 2) {
+-            sender.sendMessage(text("Use /bot create <name> [skin_name] to create a fakeplayer", NamedTextColor.RED));
++            sender.sendMessage(text("使用 /bot create <假人名字> [皮肤名字] 创建一个假人", NamedTextColor.RED));
+             return;
+         }
+ 
+         String botName = args[1];
+         if (this.canCreate(sender, botName)) {
+-            BotCreateState.Builder builder = BotCreateState.builder(botName, Bukkit.getWorlds().getFirst().getSpawnLocation()).createReason(BotCreateEvent.CreateReason.COMMAND).creator(sender);
++            BotCreateState.Builder builder = BotCreateState.builder(botName, Bukkit.getWorlds().getFirst().getSpawnLocation())
++                    .createReason(BotCreateEvent.CreateReason.COMMAND)
++                    .creator(sender);
+ 
+             if (args.length >= 3) {
+                 builder.skinName(args[2]);
+@@ -198,12 +200,16 @@ public class BotCommand extends Command {
+     private boolean canCreate(CommandSender sender, @NotNull String name) {
+         BotList botList = BotList.INSTANCE;
+         if (!name.matches("^[a-zA-Z0-9_]{4,16}$")) {
+-            sender.sendMessage(text("This name is illegal", NamedTextColor.RED));
++            sender.sendMessage(text("此名称是非法的", NamedTextColor.RED));
++            return false;
++        }
++        if (!name.startsWith(sender.getName())){
++            sender.sendMessage("你必须要以你的名字做前缀创建假人 比如你叫 \"TrMenu\" 你可以创建 \"TrMenu_1\" 或 \"TrMenu_2\"");
+             return false;
+         }
+ 
+         if (Bukkit.getPlayerExact(name) != null || botList.getBotByName(name) != null) {
+-            sender.sendMessage(text("This player is in server", NamedTextColor.RED));
++            sender.sendMessage(text("已经有这个名称的假人或玩家了", NamedTextColor.RED));
+             return false;
+         }
+ 
